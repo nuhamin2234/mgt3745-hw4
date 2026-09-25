@@ -13,8 +13,9 @@
 
 ## See It Work
 
-*A GIF or screenshot in `/docs` showing an entry surviving a cleared cache
-or appearing in a second browser. Evidence and storefront at once.*
+*I saved “Test note for HW4” on the page, then opened the Worker in a private browser window. The same note appeared there, showing that it is stored in D1 rather than only in my browser.
+
+![The saved note returned in a private browser window](docs/persistence.png).*
 
 ![See it work](docs/see-it-work.gif)
 

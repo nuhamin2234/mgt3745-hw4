@@ -1,71 +1,40 @@
-# Entries: Data Leaves the Browser
-
-> Replace this title and every *italic prompt* with your own words. Six
-> sections, in this order: What, See It Work, How to Run, Status, Links,
-> AI Use. GitHub renders this page; it can show, not only tell.
+# Meeting notes across browsers
 
 ## What
 
-*HW3 repository: (https://github.com/nuhamin2234/mgt3745-hw3)*
-
-*This page lets a student or teammate save short fictional meeting notes and return after clearing browser data. See [PROJECT.md](context/PROJECT.md) and [FEATURES.md](context/FEATURES.md). Notes now live in Cloudflare D1 through a Worker because localStorage cannot survive cleared site data; [ADR-002](context/ARCHITECTURE.md) records the choice. The table is public and shared: do not enter sensitive information.
-*
+[HW3 repository](https://github.com/nuhamin2234/mgt3745-hw3). This page lets a student save short, fictional meeting notes and find them from another browser session. See [PROJECT.md](context/PROJECT.md) and [FEATURES.md](context/FEATURES.md). Notes now live in Cloudflare D1 through a Worker because clearing browser data would remove localStorage notes. [ADR-002](context/ARCHITECTURE.md) records the decision. The list is public and shared, so users should not enter sensitive information.
 
 ## See It Work
 
-*I saved “Test note for HW4” on the page, then opened the Worker in a private browser window. The same note appeared there, showing that it is stored in D1 rather than only in my browser.
+I saved “Test note for HW4” on the page, then opened the Worker in a private browser window. The same note appeared there, showing that it is stored in D1 rather than only in my browser.
 
-![The saved note returned in a private browser window](docs/persistence.png).*
-
-![See it work](docs/see-it-work.gif)
-
-```mermaid
-flowchart LR
-  A[Page loads] --> B[GET /entries]
-  B --> C[render]
-  D[User submits] --> E[POST /entries]
-  E -->|201| B
-  E -->|400| F[showError]
-  B -->|network fails| F
-```
+![The saved note returned in a private browser window](docs/persistence.png)
 
 ## How to Run
 
-Deployed: *`https://mgt3745-hw4.YOUR-SUBDOMAIN.workers.dev/entries`*
+Deployed Worker: https://mgt3745-hw4.nuhamin2234-mgt3745.workers.dev/entries
 
-From a fresh Codespace:
+Open `index.html` with Live Server in a Codespace to use the page. From a fresh Codespace, run `npm install`, sign in with `npx wrangler login --device`, create a D1 database, place its ID in `wrangler.toml`, run `npm run db:schema`, and run `npm run deploy`. See [the Session B commands](docs/SESSION_B_COMMANDS.md).
 
-1. Open the repository in a Codespace. The devcontainer installs xdg-utils and runs `npm install`.
-2. `npx wrangler login --device`, then follow [docs/SESSION_B_COMMANDS.md](docs/SESSION_B_COMMANDS.md)
-   to create the database, run the schema, and deploy.
-3. Paste the deployed URL into `app.js` as `API`.
-4. Right-click `index.html`, choose **Open with Live Server**.
-
-To run the Worker locally instead: `npm run dev` (port 8787, local D1 emulator).
+To run the Worker locally, first run `npx wrangler d1 execute mgt3745-entries --local --file=schema.sql`, then `npm run dev` on port 8787.
 
 ## Status
 
-| Feature | EARS statement | Verdict |
-|---|---|---|
-| *Save an entry* | *WHEN a valid entry is submitted, THE SYSTEM SHALL store it* | *PASS* |
-| *Reject empty entry* | *IF text is missing, THEN THE SYSTEM SHALL reject with a reason* | *PASS* |
-| *Survive cleared cache* | *THE SYSTEM SHALL return stored entries on any device* | *PASS* |
-| *Network down* | *IF the server is unreachable, THE SYSTEM SHALL tell the user* | *CANNOT TEST YET* |
-| *Two clients, one table* | *...* | *DEFERRED (ADR-002)* |
+| Feature | Verdict |
+|---|---|
+| Save a valid note | PASS: saved through the page |
+| Read from a private browser window | PASS: the same note appeared from D1 |
+| Reject an invalid note | Implemented; direct 400 test pending |
+| Delete a note | Implemented; browser test pending |
+| Network unavailable | CANNOT TEST YET: outage test pending |
+| Simultaneous editing | DEFERRED in ADR-002 |
 
-*Full verification table lives in [FEATURES.md](context/FEATURES.md).*
+Full results belong in [FEATURES.md](context/FEATURES.md#verification).
 
 ## Links
 
-Reading order for a stranger: [PROJECT.md](context/PROJECT.md) →
-[USERS.md](context/USERS.md) → [FEATURES.md](context/FEATURES.md) →
-[ARCHITECTURE.md](context/ARCHITECTURE.md) → [STANDARDS.md](context/STANDARDS.md) →
-[TOOLS.md](context/TOOLS.md) → [STYLE.md](context/STYLE.md) →
-[CLAUDE.md](context/CLAUDE.md)
+Read in order: [PROJECT.md](context/PROJECT.md) → [USERS.md](context/USERS.md) → [FEATURES.md](context/FEATURES.md) → [ARCHITECTURE.md](context/ARCHITECTURE.md) → [STANDARDS.md](context/STANDARDS.md) → [TOOLS.md](context/TOOLS.md) → [STYLE.md](context/STYLE.md) → [CLAUDE.md](context/CLAUDE.md).
 
 ## AI Use
 
-*Three proto-DDR questions. What did the agent write? What did you check,
-and how? What could you not fully verify, and what did you do about it?
-For the Worker specifically: name the thing you could not fully inspect.
-Hours spent: ___.*
+ChatGPT helped draft the Worker validation, Delete route, page fetch calls, and documentation. I checked JavaScript syntax with `node --check`, deployed the Worker, saved a note through the page, and retrieved it in a private browser window. I could not fully verify what the CORS headers did by reading them, so I tested the page calling the Worker from a different origin. A simulated network failure still needs testing. Hours spent: 5.

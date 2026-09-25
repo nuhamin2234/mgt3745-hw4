@@ -8,9 +8,8 @@
 
 *HW3 repository: (https://github.com/nuhamin2234/mgt3745-hw3)*
 
-*One paragraph naming the problem, the user, and the feature, with links to
-[PROJECT.md](context/PROJECT.md) and [FEATURES.md](context/FEATURES.md).
-One sentence on where data now lives and why (ADR-002).*
+*This page lets a student or teammate save short fictional meeting notes and return after clearing browser data. See [PROJECT.md](context/PROJECT.md) and [FEATURES.md](context/FEATURES.md). Notes now live in Cloudflare D1 through a Worker because localStorage cannot survive cleared site data; [ADR-002](context/ARCHITECTURE.md) records the choice. The table is public and shared: do not enter sensitive information.
+*
 
 ## See It Work
 
